@@ -1,1 +1,1 @@
-# FSHQTraining
+use npm install
