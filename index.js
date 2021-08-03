@@ -4,6 +4,7 @@ const CompanyRoute = require('./routes/company');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const dotenv = require('dotenv/config');
+const StocksUpdate = require('./routes/updateStocks');
 
 const app = express();
 
@@ -12,6 +13,8 @@ app.use(bodyParser.json());
 // route middleware
 app.use('/api/user', AuthRoute);
 app.use('/api/company', CompanyRoute);
+
+StocksUpdate();
 
 // db connection
 mongoose.connect(
@@ -22,4 +25,4 @@ mongoose.connect(
 
 const PORT = process.env.PORT || 3000;
 
-app.listen(PORT, console.log(`Server is running on localhost:${PORT}`))
+app.listen(PORT, console.log(`Server is running on localhost:${PORT}`));

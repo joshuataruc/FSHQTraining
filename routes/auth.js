@@ -3,6 +3,7 @@ const User = require('../models/User');
 const bcrypt = require('bcryptjs');
 const { userRegisterValidation, loginValidation } = require('../validations/userValidation');
 const { valid } = require('@hapi/joi');
+const jwt = require('jsonwebtoken');
 
 router.post('/register', async (req, res) => {
 
@@ -34,21 +35,22 @@ router.post('/register', async (req, res) => {
     }
 });
 
-router.post('/login', async (req, res) =>{
+router.post('/login', async (req, res) => {
     //validating the user input
-    const {error} = loginValidation(req.body);
-    if(error) return res.status(400).send(error.details[0].message);
+    const { error } = loginValidation(req.body);
+    if (error) return res.status(400).send(error.details[0].message);
 
     // check if email !exist
-    const user = await User.findOne({email: req.body.email});
-    if(!user) return res.status(400).send('Invalid Email');
+    const user = await User.findOne({ email: req.body.email });
+    if (!user) return res.status(400).send('Invalid Email');
 
+    //checking the password if matched
     const validPass = await bcrypt.compare(req.body.password, user.password);
-    if(!validPass) return res.status(400).send('Invalid Password');
+    if (!validPass) return res.status(400).send('Invalid Password');
 
-    res.send('Logged In!')
-
-
+    // creating and setting JWT token
+    const token = jwt.sign({ _id: user._id }, process.env.SECRET_TOKEN);
+    res.header('auth-token', token).send(token);
 
 });
 
